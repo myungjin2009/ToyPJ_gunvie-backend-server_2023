@@ -18,10 +18,16 @@ public class VerifyService {
 
     //인증번호 일치 불일치 확인
     public boolean verifyEqual(Email existEmail, Email receivedEmail) {
-        if(receivedEmail.getVerifyNumber().equals(existEmail.getVerifyNumber())) {
-            return true;
-        } else {
+
+        if(!receivedEmail.getEmail().equals(existEmail.getEmail())) {
             return false;
         }
+
+        if(receivedEmail.getVerifyNumber().equals(existEmail.getVerifyNumber())) {
+            return true;
+        }
+
+        return false;
+
     }
 }

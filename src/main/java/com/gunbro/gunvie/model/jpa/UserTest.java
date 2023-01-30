@@ -15,12 +15,16 @@ public class UserTest {
     private String loginId;
 
     @Column
+    private String email;
+
+    @Column
     private String password;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     public UserTest() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public UserTest(String loginId, String password ) {
@@ -47,5 +51,13 @@ public class UserTest {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
