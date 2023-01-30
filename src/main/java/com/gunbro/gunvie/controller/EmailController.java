@@ -64,10 +64,12 @@ public class EmailController {
             boolean isMatch = verifyService.verifyEqual(receivedEmail, existEmail);
             if(!isMatch) {
                 defaultDto.setCode(403);
-                defaultDto.setMessage("인증번호가 불일치 합니다.");
+                defaultDto.setMessage("이메일/인증번호가 불일치 합니다.");
             } else {
                 defaultDto.setCode(200);
                 defaultDto.setMessage("인증번호가 일치 합니다.");
+                existEmail.setVerified(true);
+                httpSession.setAttribute("emailVerify", existEmail);
             }
         }
         return defaultDto;

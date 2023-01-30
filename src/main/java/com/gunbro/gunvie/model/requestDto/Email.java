@@ -14,6 +14,8 @@ public class Email {
 
     private LocalDateTime mailSendDate;
 
+    private boolean verified = false;
+
 
 
 
@@ -57,5 +59,13 @@ public class Email {
 
     public void setMailSendDate(LocalDateTime mailSendDate) {
         this.mailSendDate = mailSendDate;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }
