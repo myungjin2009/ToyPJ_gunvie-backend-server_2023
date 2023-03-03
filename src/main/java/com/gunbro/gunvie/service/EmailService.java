@@ -23,8 +23,7 @@ public class EmailService {
         String title = "Gunvie 인증번호 안내입니다.";
         String content = "메일 인증번호는 "+ verifyNumber + " 입니다.";
 
-        //String result = sendMailFinal(receiveList, title, content);
-        String result = "successful";
+        String result = sendMailFinally(receiveList, title, content);
 
         DefaultDto dto = new DefaultDto();
 
@@ -38,7 +37,7 @@ public class EmailService {
         return dto;
     }
 
-    public String sendMailFinal(String[] receiveList, String title, String content) {
+    private String sendMailFinally(String[] receiveList, String title, String content) {
         String result = "successful";
         try {
             //1. 메일 수신자 설정

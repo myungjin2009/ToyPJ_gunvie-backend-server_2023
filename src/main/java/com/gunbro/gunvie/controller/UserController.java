@@ -7,14 +7,25 @@ import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.repository.UserTestRepository;
 import com.gunbro.gunvie.service.BCryptService;
+import com.gunbro.gunvie.service.MovieService;
 import com.gunbro.gunvie.service.UserService;
 import com.gunbro.gunvie.service.VerifyService;
 import jakarta.servlet.http.HttpSession;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cglib.core.Local;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.http.HttpClient;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -22,29 +33,9 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserTestRepository userTestRepository;
-    @Autowired
-    BCryptService bCryptService;
-
-    @Autowired
-    VerifyService verifyService;
-
-    @Autowired
     UserService userService;
 
-    @GetMapping("/hello")
-    public String hello(){
-        UserTest userTest = new UserTest();
-        userTest.setLoginId("hello1");
-        String afterEncode = bCryptService.encodeBcrypt("1234", BCrypt.STRENGTH.getStrength());
-        userTest.setPassword(afterEncode);
-        userTestRepository.save(userTest);
 
-        List<UserTest> findUser = userTestRepository.findByloginId("hello1");
-        boolean result = bCryptService.matchesBcrypt("1235", findUser.get(0).getPassword(), BCrypt.STRENGTH.getStrength());
-
-        return String.valueOf(result);
-    }
 
     @PostMapping("/join")
     public DefaultDto insertSession(@RequestBody User user, HttpSession httpSession) {
