@@ -32,11 +32,10 @@ public class MovieController {
     @GetMapping("/fetch")
     public MovieResponseDto fetch(@RequestParam String date) {
         List<Movie> result = movieService.getMovieData(date);
-
         MovieResponseDto movieResponseDto = new MovieResponseDto();
-        if(result == null) {
+        if(result.isEmpty()) {
             movieResponseDto.setCode(500);
-            movieResponseDto.setMessage("데이터를 불러오는데 실패하였습니다.");
+            movieResponseDto.setMessage("데이터를 불러오는데 실패하였습니다. 서버측 문제입니다.");
         } else {
             movieResponseDto.setCode(200);
             movieResponseDto.setMessage("데이터를 정상적으로 불러왔습니다.");
