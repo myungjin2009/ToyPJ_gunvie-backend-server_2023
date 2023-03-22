@@ -6,12 +6,10 @@ import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.service.EmailService;
 import com.gunbro.gunvie.service.VerifyService;
 import jakarta.servlet.http.HttpSession;
-import org.hibernate.query.sqm.function.JdbcEscapeFunctionDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/email")
@@ -36,6 +34,7 @@ public class EmailController {
                     email.setVerifyNumber(verifyNumber);
                     email.setMailSendDate(LocalDateTime.now());
                     httpSession.setAttribute("emailVerify", email);
+                    httpSession.setMaxInactiveInterval(10);
                 }
                 return dto;
             }
