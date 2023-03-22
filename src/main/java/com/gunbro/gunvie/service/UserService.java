@@ -2,13 +2,11 @@ package com.gunbro.gunvie.service;
 
 import com.gunbro.gunvie.config.enumData.BCrypt;
 import com.gunbro.gunvie.model.jpa.User;
+import com.gunbro.gunvie.model.requestDto.LocalLogin;
 import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -21,8 +19,8 @@ public class UserService {
 
     @Transactional
     public String registerUser(User user) {
-        List<User> result = userRepository.findByLoginId(user.getLoginId());
-        if(!result.isEmpty()) {
+        User result = userRepository.findByLoginId(user.getLoginId());
+        if(result != null) {
             return "Login_id_already_exists";
         }
 
@@ -40,5 +38,22 @@ public class UserService {
 //        }
 
         return "SUCCESS";
+    }
+
+    public User loginLocalUser(LocalLogin localLogin) {
+        User user = userRepository.findByLoginId(localLogin.getLoginId());
+        if(user == null) {
+            System.out.println("아이디 없음!");
+            return null;
+        }
+
+        boolean result = bCryptService.matchesBcrypt(localLogin.getPassword(), user.getPassword(), BCrypt.STRENGTH.getStrength());
+        if(!result) {
+            System.out.println("비밀번호 안맞음!");
+            return null;
+        } else {
+            return user;
+        }
+
     }
 }
