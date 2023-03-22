@@ -1,17 +1,21 @@
 package com.gunbro.gunvie.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BCryptService {
 
-    public String encodeBcrypt(String plainText, int strength) {
-        return new BCryptPasswordEncoder(strength).encode(plainText);
+    @Value("${bcrypt.strength}")
+    int bcryptStrength;
+
+    public String encodeBcrypt(String plainText) {
+        return new BCryptPasswordEncoder(bcryptStrength).encode(plainText);
     }
 
-    public boolean matchesBcrypt(String plainText, String hashValue, int strength) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(strength);
+    public boolean matchesBcrypt(String plainText, String hashValue) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(bcryptStrength);
         return passwordEncoder.matches(plainText, hashValue);
     }
 }

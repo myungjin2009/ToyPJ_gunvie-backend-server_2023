@@ -1,6 +1,5 @@
 package com.gunbro.gunvie.service;
 
-import com.gunbro.gunvie.config.enumData.BCrypt;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
 import com.gunbro.gunvie.repository.UserRepository;
@@ -17,6 +16,8 @@ public class UserService {
     @Autowired
     BCryptService bCryptService;
 
+
+
     @Transactional
     public String registerUser(User user) {
         User result = userRepository.findByLoginId(user.getLoginId());
@@ -25,7 +26,7 @@ public class UserService {
         }
 
         //비밀번호 암호화 로직 (BCrypt)
-        String passwordEncoded = bCryptService.encodeBcrypt(user.getPassword(), BCrypt.STRENGTH.getStrength());
+        String passwordEncoded = bCryptService.encodeBcrypt(user.getPassword());
         user.setPassword(passwordEncoded);
 
         //Try-Catch문을 사용하면 정상적인 RollBack루틴이 되지 않아 문법오류가 발생한다.
@@ -47,7 +48,7 @@ public class UserService {
             return null;
         }
 
-        boolean result = bCryptService.matchesBcrypt(localLogin.getPassword(), user.getPassword(), BCrypt.STRENGTH.getStrength());
+        boolean result = bCryptService.matchesBcrypt(localLogin.getPassword(), user.getPassword());
         if(!result) {
             System.out.println("비밀번호 안맞음!");
             return null;
