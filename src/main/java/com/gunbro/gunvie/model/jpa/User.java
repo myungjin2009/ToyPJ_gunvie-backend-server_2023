@@ -29,6 +29,7 @@ public class User {
     private String snsId;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Column(nullable = false)
