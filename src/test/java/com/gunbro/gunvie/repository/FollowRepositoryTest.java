@@ -71,7 +71,7 @@ class FollowRepositoryTest {
         follow3.setFollowId(followUser2ToUser1);
         followRepository.save(follow3);
 
-        List<Follow> testResult = followRepository.findFollowing(userRepository.findByLoginId("aaa1"));
+        List<Follow> testResult = followRepository.findFollowingAll(userRepository.findByLoginId("aaa1"));
 
         Assertions.assertThat(testResult.get(0).getFollowId().getFollowing().getName())
                 .isEqualTo("NAMEaaa2");

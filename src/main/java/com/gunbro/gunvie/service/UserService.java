@@ -1,7 +1,9 @@
 package com.gunbro.gunvie.service;
 
+import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
+import com.gunbro.gunvie.repository.FollowRepository;
 import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
