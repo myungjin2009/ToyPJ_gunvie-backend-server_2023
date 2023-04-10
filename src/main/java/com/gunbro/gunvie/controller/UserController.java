@@ -1,27 +1,21 @@
 package com.gunbro.gunvie.controller;
 
-import com.gunbro.gunvie.config.enumData.Gender;
 import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
-import com.gunbro.gunvie.model.responseDto.FollowUserResponseDto;
+import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserList;
+import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserResponseDto;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -34,29 +28,28 @@ public class UserController {
     FollowService followService;
 
     @GetMapping("/following")
-    public List<FollowUserResponseDto> showFollowing(@RequestParam int page, HttpSession httpSession) {
-
+    public FollowUserResponseDto showFollowing(@RequestParam int page, HttpSession httpSession) {
+        FollowUserResponseDto dto = new FollowUserResponseDto();
 
         User user2 = (User)httpSession.getAttribute("loginSession");
+        if (user2 == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            dto.setList(null);
+            return dto;
+        }
 
+        List<FollowUserList> followUserLists = new ArrayList<>();
         Page<Follow> result = followService.showFollowingUsers(page, user2);
-//        List<User> test2 = result.getContent().stream()
-//                .map(data -> data.getFollowId().getFollowing()).toList();
-//
-//        List<FollowUserResponseDto> convertResult = new ArrayList<>();
-//
-//        for (User u : test2) {
-//            convertResult.add(new FollowUserResponseDto(u.getId(),u.getName(), u.getSnsId(), u.getGender(), u.getEmail(), u.getImg()));
-//        }
-        List<FollowUserResponseDto> convertResult = result.getContent().stream()
-                .map(data -> data.getFollowId())
-                .map(data2 -> data2.getFollowing())
-                .map(user -> new FollowUserResponseDto(user.getId(), user.getName(), user.getSnsId(), user.getGender(), user.getEmail(), user.getImg()))
-                .collect(Collectors.toList());
+        for (Follow f : result.getContent()) {
+            followUserLists.add(new FollowUserList(f));
+        }
 
+        dto.setCode(200);
+        dto.setMessage("정상적으로 불러왔습니다. (최근 추가된 순서대로)");
+        dto.setList(followUserLists);
 
-
-        return convertResult;
+        return dto;
     }
 
     @PostMapping("/join")

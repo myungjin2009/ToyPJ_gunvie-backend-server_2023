@@ -2,7 +2,6 @@ package com.gunbro.gunvie.controller;
 
 import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
-import com.gunbro.gunvie.model.responseDto.FollowUserResponseDto;
 import com.gunbro.gunvie.repository.FollowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class FollowService {
