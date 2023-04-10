@@ -4,32 +4,11 @@ import com.gunbro.gunvie.model.jpa.Movie;
 
 import java.util.List;
 
-public class MovieResponseDto {
-
-    private int code;
-
-    private String message;
+public class MovieResponseDto extends DefaultDto {
 
     private List<Movie> movieData;
 
     public MovieResponseDto() {
-    }
-
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public List<Movie> getMovieData() {
