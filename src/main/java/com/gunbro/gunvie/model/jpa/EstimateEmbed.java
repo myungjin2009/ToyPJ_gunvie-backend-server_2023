@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 @Embeddable
 public class EstimateEmbed {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    //TODO 작동을 안함. (Column 'id' cannot be null
+    //TODO JPA공부 후, 수정 필요
+//    @Column
+//    private Long id;
 
     @ManyToOne
     @JoinColumn(name="userId")
@@ -16,4 +17,24 @@ public class EstimateEmbed {
     @ManyToOne
     @JoinColumn(name="movieId")
     private Movie movie;
+
+    public EstimateEmbed() {
+    }
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
 }
