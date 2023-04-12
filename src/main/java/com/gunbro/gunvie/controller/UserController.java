@@ -1,5 +1,6 @@
 package com.gunbro.gunvie.controller;
 
+import com.gunbro.gunvie.config.enumData.EmailType;
 import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Email;
@@ -55,7 +56,7 @@ public class UserController {
     @PostMapping("/join")
     public DefaultDto userJoin(@RequestBody User user, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
-        Email verifyResult = (Email) httpSession.getAttribute("emailVerify");
+        Email verifyResult = (Email) httpSession.getAttribute("emailVerify"+ EmailType.VERIFY_NUMBER.name());
         //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
         if (verifyResult == null) {
             dto.setCode(403);
@@ -126,5 +127,10 @@ public class UserController {
         dto.setCode(200);
         dto.setMessage("로그인 되었습니다.");
         return dto;
+    }
+
+    @PostMapping("/search_id")
+    public void searchId() {
+
     }
 }

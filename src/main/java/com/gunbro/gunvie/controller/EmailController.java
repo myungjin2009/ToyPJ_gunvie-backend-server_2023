@@ -6,14 +6,22 @@ import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.service.EmailService;
 import com.gunbro.gunvie.service.VerifyService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/email")
 public class EmailController {
+
+    //temp
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     EmailService emailService;
@@ -26,15 +34,15 @@ public class EmailController {
         EmailType type = email.getEmailType();
         DefaultDto dto;
         switch(type) {
-            case VERIFY_NUMBER -> {
+            case VERIFY_NUMBER,FIND_ID -> {
                 //TODO 이메일 인증 : 난수발생기 모듈 만들기
                 String verifyNumber = "000000";
                 dto = emailService.sendMailVerifyNumber(email,verifyNumber);
                 if(dto.getCode() == 200) {
                     email.setVerifyNumber(verifyNumber);
                     email.setMailSendDate(LocalDateTime.now());
-                    httpSession.setAttribute("emailVerify", email);
-                    httpSession.setMaxInactiveInterval(10);
+                    httpSession.setAttribute("emailVerify"+type.name(), email);
+                    httpSession.setMaxInactiveInterval(180); //180초
                 }
                 return dto;
             }
@@ -53,7 +61,10 @@ public class EmailController {
     @PostMapping("/verify")
     public DefaultDto verifyEmail(@RequestBody Email receivedEmail, HttpSession httpSession) {
         DefaultDto defaultDto = new DefaultDto();
-        Email existEmail = (Email) httpSession.getAttribute("emailVerify");
+        EmailType type = receivedEmail.getEmailType();
+        Email existEmail = (Email) httpSession.getAttribute("emailVerify"+type.name());
+
+        logger.warn(existEmail.toString());
 
         boolean isNotExpired = verifyService.checkExpireDate(existEmail);
         if(!isNotExpired) {
@@ -68,7 +79,7 @@ public class EmailController {
                 defaultDto.setCode(200);
                 defaultDto.setMessage("인증번호가 일치 합니다.");
                 existEmail.setVerified(true);
-                httpSession.setAttribute("emailVerify", existEmail);
+                httpSession.setAttribute("emailVerify"+type.name(), existEmail);
             }
         }
         return defaultDto;

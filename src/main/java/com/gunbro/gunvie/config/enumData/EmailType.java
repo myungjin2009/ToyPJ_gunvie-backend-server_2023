@@ -1,5 +1,5 @@
 package com.gunbro.gunvie.config.enumData;
 
 public enum EmailType {
-    VERIFY_NUMBER,ADVERTISEMENT
+    VERIFY_NUMBER,FIND_ID,ADVERTISEMENT
 }
