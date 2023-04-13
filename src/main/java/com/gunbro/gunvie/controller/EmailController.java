@@ -64,8 +64,6 @@ public class EmailController {
         EmailType type = receivedEmail.getEmailType();
         Email existEmail = (Email) httpSession.getAttribute("emailVerify"+type.name());
 
-        logger.warn(existEmail.toString());
-
         boolean isNotExpired = verifyService.checkExpireDate(existEmail);
         if(!isNotExpired) {
             defaultDto.setCode(403);

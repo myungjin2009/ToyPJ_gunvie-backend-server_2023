@@ -5,12 +5,16 @@ import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
+import com.gunbro.gunvie.model.requestDto.User.SearchIdRequestDto;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserList;
 import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserResponseDto;
+import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    //temp
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserService userService;
@@ -130,7 +138,45 @@ public class UserController {
     }
 
     @PostMapping("/search_id")
-    public void searchId() {
+    public SearchIdResponseDto searchId(@RequestBody SearchIdRequestDto searchIdRequestDto, HttpSession httpSession) {
+        SearchIdResponseDto dto = new SearchIdResponseDto();
+        Email verifyResult = (Email) httpSession.getAttribute("emailVerify"+ EmailType.FIND_ID.name());
+        //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
+        //TODO : 중복 코드!
+        if (verifyResult == null) {
+            dto.setCode(403);
+            dto.setMessage("세션이 지워졌거나 너무 오래되었습니다.");
+            return dto;
+        }
 
+        //이메일 인증 확인(/email/verify)가 안되었을 경우
+        if (!verifyResult.isVerified()) {
+            dto.setCode(403);
+            dto.setMessage("이메일 인증이 되지 않았습니다.");
+            return dto;
+        }
+
+        //이메일 인증 확인 후, 이메일 주소가 바뀌었을 경우
+        if (!verifyResult.getEmail().equals(searchIdRequestDto.getEmail())) {
+            dto.setCode(403);
+            dto.setMessage("이메일 인증 후 이메일주소 변경됨. 데이터 무결성 오류");
+            return dto;
+        }
+
+
+        User user = userService.searchId(searchIdRequestDto);
+        if(user == null) {
+            dto.setCode(400);
+            dto.setMessage("이름과 이메일에 해당하는 유저 아이디가 없습니다.");
+            return dto;
+        }
+
+        dto.setCode(200);
+        dto.setMessage("DB에서 검색된 로그인 아이디를 반환합니다.");
+        dto.setLoginId(user.getLoginId());
+
+        //httpSession.invalidate();
+
+        return dto;
     }
 }

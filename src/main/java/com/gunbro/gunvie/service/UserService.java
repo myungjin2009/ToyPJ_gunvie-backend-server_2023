@@ -3,6 +3,7 @@ package com.gunbro.gunvie.service;
 import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
+import com.gunbro.gunvie.model.requestDto.User.SearchIdRequestDto;
 import com.gunbro.gunvie.repository.FollowRepository;
 import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +59,10 @@ public class UserService {
             return user;
         }
 
+    }
+
+    public User searchId(SearchIdRequestDto searchIdRequestDto) {
+        User user = userRepository.findByNameAndEmail(searchIdRequestDto.getName(), searchIdRequestDto.getEmail());
+        return user;
     }
 }
