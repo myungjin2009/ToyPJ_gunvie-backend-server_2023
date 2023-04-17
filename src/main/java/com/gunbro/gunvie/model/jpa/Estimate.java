@@ -3,6 +3,7 @@ package com.gunbro.gunvie.model.jpa;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Estimate {
@@ -19,7 +20,7 @@ public class Estimate {
     private String text;
 
     @Column
-    private String Img;
+    private List<String> images;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -61,14 +62,6 @@ public class Estimate {
         this.text = text;
     }
 
-    public String getImg() {
-        return Img;
-    }
-
-    public void setImg(String img) {
-        Img = img;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -91,5 +84,13 @@ public class Estimate {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }
