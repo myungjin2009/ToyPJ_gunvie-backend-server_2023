@@ -11,10 +11,6 @@ import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
 public class EstimateService {
 
@@ -45,5 +41,17 @@ public class EstimateService {
 
         estimateRepository.save(estimate1);
         return result;
+    }
+
+    public Estimate findReviewByMovieId(User user, Long movieId) {
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        return estimateRepository.findReviewByMovieId(user, movie);
+    }
+
+    public Estimate saveImage(Estimate estimate, String convertFileName) {
+        estimate.setImages(convertFileName);
+        Estimate newEstimate = estimateRepository.save(estimate);
+        if(!newEstimate.getImages().equals(convertFileName)) return null;
+        return newEstimate;
     }
 }

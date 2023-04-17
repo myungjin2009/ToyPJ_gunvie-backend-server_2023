@@ -1,9 +1,11 @@
 package com.gunbro.gunvie.model.jpa;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 public class Estimate {
@@ -20,7 +22,7 @@ public class Estimate {
     private String text;
 
     @Column
-    private List<String> images;
+    private String images;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -86,11 +88,11 @@ public class Estimate {
         this.deletedAt = deletedAt;
     }
 
-    public List<String> getImages() {
+    public String getImages() {
         return images;
     }
 
-    public void setImages(List<String> images) {
+    public void setImages(String images) {
         this.images = images;
     }
 }

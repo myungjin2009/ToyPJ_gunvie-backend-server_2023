@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class EstimateRepositoryTest {
 
@@ -22,15 +20,16 @@ class EstimateRepositoryTest {
 
     @Test
     void addReviewTest() {
-//        EstimateEmbed estimateEmbed1 = new EstimateEmbed();
-//        estimateEmbed1.setMovie(movieRepository.findByName("대외비"));
-//        estimateEmbed1.setUser(userRepository.findByLoginId("myungjin2009@naver.com"));
-//
-//        Estimate estimate1 = new Estimate();
-//        estimate1.setEstimate(estimateEmbed1);
-//        estimate1.setText("진짜 좆노잼!!");
-//        estimate1.setStartRating(1);
-//
-//        estimateRepository.save(estimate1);
+        EstimateEmbed estimateEmbed1 = new EstimateEmbed();
+        estimateEmbed1.setMovie(movieRepository.findByName("대외비"));
+        estimateEmbed1.setUser(userRepository.findByLoginId("myungjin2009"));
+
+        Estimate estimate1 = new Estimate();
+        estimate1.setEstimate(estimateEmbed1);
+        estimate1.setText("진짜 노잼!!");
+        estimate1.setStartRating(1);
+        estimate1.setImages("aaa.png");
+
+        estimateRepository.save(estimate1);
     }
 }
