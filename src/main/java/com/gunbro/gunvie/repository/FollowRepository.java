@@ -20,4 +20,7 @@ public interface FollowRepository extends JpaRepository<Follow, FollowEmbed> {
 
     @Query("SELECT u FROM Follow u WHERE u.followId.follower = :followerId")
     Page<Follow> findFollowing(@Param("followerId") User user, Pageable pageable);
+
+    @Query("SELECT u FROM Follow u WHERE u.followId.following = :followingId")
+    Page<Follow> findFollower(@Param("followingId") User user, Pageable pageable);
 }

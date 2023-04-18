@@ -25,4 +25,13 @@ public class FollowService {
 
         return result;
     }
+
+    public Page<Follow> showFollowerUsers(int page, User user) {
+        Pageable pageable = PageRequest.of(page, 12, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Follow> result = followRepository.findFollower(user, pageable);
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result;
+    }
 }

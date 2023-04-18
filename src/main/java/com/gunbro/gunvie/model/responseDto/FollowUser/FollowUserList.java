@@ -1,5 +1,6 @@
 package com.gunbro.gunvie.model.responseDto.FollowUser;
 
+import com.gunbro.gunvie.config.enumData.FollowType;
 import com.gunbro.gunvie.config.enumData.Gender;
 import com.gunbro.gunvie.model.jpa.Follow;
 
@@ -25,13 +26,23 @@ public class FollowUserList {
         this.img = img;
     }
 
-    public FollowUserList(Follow follow) {
-        this.id = follow.getFollowId().getFollowing().getId();
-        this.name = follow.getFollowId().getFollowing().getName();
-        this.snsId = follow.getFollowId().getFollowing().getSnsId();
-        this.gender = follow.getFollowId().getFollowing().getGender();
-        this.email = follow.getFollowId().getFollowing().getEmail();
-        this.img = follow.getFollowId().getFollowing().getImg();
+    public FollowUserList(Follow follow, FollowType type) {
+        if(type == FollowType.FOLLOWING) {
+            this.id = follow.getFollowId().getFollowing().getId();
+            this.name = follow.getFollowId().getFollowing().getName();
+            this.snsId = follow.getFollowId().getFollowing().getSnsId();
+            this.gender = follow.getFollowId().getFollowing().getGender();
+            this.email = follow.getFollowId().getFollowing().getEmail();
+            this.img = follow.getFollowId().getFollowing().getImg();
+        } else if(type == FollowType.FOLLOWER) {
+            this.id = follow.getFollowId().getFollower().getId();
+            this.name = follow.getFollowId().getFollower().getName();
+            this.snsId = follow.getFollowId().getFollower().getSnsId();
+            this.gender = follow.getFollowId().getFollower().getGender();
+            this.email = follow.getFollowId().getFollower().getEmail();
+            this.img = follow.getFollowId().getFollower().getImg();
+        }
+
     }
 
 
