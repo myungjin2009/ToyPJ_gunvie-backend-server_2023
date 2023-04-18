@@ -50,8 +50,10 @@ public class UserController {
 
         List<FollowUserList> followUserLists = new ArrayList<>();
         Page<Follow> result = followService.showFollowingUsers(page, user2);
-        for (Follow f : result.getContent()) {
-            followUserLists.add(new FollowUserList(f));
+        if (result != null) {
+            for (Follow f : result.getContent()) {
+                followUserLists.add(new FollowUserList(f));
+            }
         }
 
         dto.setCode(200);
