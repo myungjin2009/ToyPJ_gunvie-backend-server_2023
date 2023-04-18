@@ -1,11 +1,9 @@
 package com.gunbro.gunvie.service;
 
-import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
 import com.gunbro.gunvie.model.requestDto.User.SearchIdRequestDto;
 import com.gunbro.gunvie.model.requestDto.User.SearchPwRequestDto;
-import com.gunbro.gunvie.repository.FollowRepository;
 import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,13 +54,13 @@ public class UserService {
     public User loginLocalUser(LocalLogin localLogin) {
         User user = userRepository.findByLoginId(localLogin.getLoginId());
         if(user == null) {
-            System.out.println("아이디 없음!");
+            //존재하지 않는 아이디
             return null;
         }
 
         boolean result = bCryptService.matchesBcrypt(localLogin.getPassword(), user.getPassword());
         if(!result) {
-            System.out.println("비밀번호 안맞음!");
+            //비밀번호 불일치
             return null;
         } else {
             return user;
@@ -71,16 +69,14 @@ public class UserService {
     }
 
     public User searchId(SearchIdRequestDto searchIdRequestDto) {
-        User user = userRepository.findByNameAndEmail(searchIdRequestDto.getName(), searchIdRequestDto.getEmail());
-        return user;
+        return userRepository.findByNameAndEmail(searchIdRequestDto.getName(), searchIdRequestDto.getEmail());
     }
 
     public User searchPw(SearchPwRequestDto searchPwRequestDto) {
-        User user = userRepository.findByNameAndLoginIdAndEmail(
+        return userRepository.findByNameAndLoginIdAndEmail(
                 searchPwRequestDto.getName(),
                 searchPwRequestDto.getLoginId(),
                 searchPwRequestDto.getEmail()
         );
-        return user;
     }
 }
