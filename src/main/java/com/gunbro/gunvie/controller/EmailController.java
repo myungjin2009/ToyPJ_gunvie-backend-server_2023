@@ -34,7 +34,7 @@ public class EmailController {
         EmailType type = email.getEmailType();
         DefaultDto dto;
         switch(type) {
-            case VERIFY_NUMBER,FIND_ID -> {
+            case VERIFY_NUMBER,FIND_ID,FIND_PW -> {
                 //TODO 이메일 인증 : 난수발생기 모듈 만들기
                 String verifyNumber = "000000";
                 dto = emailService.sendMailVerifyNumber(email,verifyNumber);

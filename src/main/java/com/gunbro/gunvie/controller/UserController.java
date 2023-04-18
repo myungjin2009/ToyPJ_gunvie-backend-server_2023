@@ -6,11 +6,14 @@ import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
+import com.gunbro.gunvie.model.requestDto.User.ResetPwRequestDto;
 import com.gunbro.gunvie.model.requestDto.User.SearchIdRequestDto;
+import com.gunbro.gunvie.model.requestDto.User.SearchPwRequestDto;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserList;
 import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
+import com.gunbro.gunvie.service.BCryptService;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -168,10 +171,74 @@ public class UserController {
         return dto;
     }
 
+    @PostMapping("/search_pw")
+    public DefaultDto searchPw(@RequestBody SearchPwRequestDto searchPwRequestDto, HttpSession httpSession){
+        DefaultDto dto = new DefaultDto();
+        Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.FIND_PW.name());
+        //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
+        //TODO : 중복 코드!
+        if (verifyResult == null) {
+            dto.setCode(403);
+            dto.setMessage("세션이 지워졌거나 너무 오래되었습니다.");
+            return dto;
+        }
+
+        //이메일 인증 확인(/email/verify)가 안되었을 경우
+        if (!verifyResult.isVerified()) {
+            dto.setCode(403);
+            dto.setMessage("이메일 인증이 되지 않았습니다.");
+            return dto;
+        }
+
+        //이메일 인증 확인 후, 이메일 주소가 바뀌었을 경우
+        if (!verifyResult.getEmail().equals(searchPwRequestDto.getEmail())) {
+            dto.setCode(403);
+            dto.setMessage("이메일 인증 후 이메일주소 변경됨. 데이터 무결성 오류");
+            return dto;
+        }
+
+        User user = userService.searchPw(searchPwRequestDto);
+
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("해당 이름, 아이디, 이메일에 해당하는 유저가 없습니다.");
+            return dto;
+        }
+
+        dto.setCode(200);
+        dto.setMessage("DB에서 검색되었습니다.");
+        httpSession.setAttribute("auth"+EmailType.FIND_PW.name(), user);
+        //httpSession.invalidate();
+
+        return dto;
+    }
+
+    @PostMapping("/reset_pw")
+    public DefaultDto resetPw(@RequestBody ResetPwRequestDto resetPwRequestDto, HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User user = (User)httpSession.getAttribute("auth"+EmailType.FIND_PW.name());
+        //TODO : 중복 코드!
+        if (user == null) {
+            dto.setCode(403);
+            dto.setMessage("세션이 지워졌거나 너무 오래되었습니다.");
+            return dto;
+        }
+        user.setPassword(resetPwRequestDto.getChangePw());
+        Boolean result = userService.updatePassword(user);
+        if(!result) {
+            dto.setCode(500);
+            dto.setMessage("서버측에서 무언가 잘못되었습니다!");
+            return dto;
+        }
+        dto.setCode(200);
+        dto.setMessage("비밀번호가 업데이트 되었습니다.");
+        return dto;
+    }
+
     @PostMapping("/search_id")
     public SearchIdResponseDto searchId(@RequestBody SearchIdRequestDto searchIdRequestDto, HttpSession httpSession) {
         SearchIdResponseDto dto = new SearchIdResponseDto();
-        Email verifyResult = (Email) httpSession.getAttribute("emailVerify"+ EmailType.FIND_ID.name());
+        Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.FIND_ID.name());
         //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
         //TODO : 중복 코드!
         if (verifyResult == null) {
@@ -196,7 +263,7 @@ public class UserController {
 
 
         User user = userService.searchId(searchIdRequestDto);
-        if(user == null) {
+        if (user == null) {
             dto.setCode(400);
             dto.setMessage("이름과 이메일에 해당하는 유저 아이디가 없습니다.");
             return dto;

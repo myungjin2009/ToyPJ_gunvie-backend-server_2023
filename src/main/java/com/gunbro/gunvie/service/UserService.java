@@ -4,6 +4,7 @@ import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
 import com.gunbro.gunvie.model.requestDto.User.SearchIdRequestDto;
+import com.gunbro.gunvie.model.requestDto.User.SearchPwRequestDto;
 import com.gunbro.gunvie.repository.FollowRepository;
 import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,14 @@ public class UserService {
         return "SUCCESS";
     }
 
+    public boolean updatePassword(User user) {
+        //비밀번호 암호화 로직 (BCrypt)
+        String passwordEncoded = bCryptService.encodeBcrypt(user.getPassword());
+        user.setPassword(passwordEncoded);
+        userRepository.save(user);
+        return true;
+    }
+
     public User loginLocalUser(LocalLogin localLogin) {
         User user = userRepository.findByLoginId(localLogin.getLoginId());
         if(user == null) {
@@ -63,6 +72,15 @@ public class UserService {
 
     public User searchId(SearchIdRequestDto searchIdRequestDto) {
         User user = userRepository.findByNameAndEmail(searchIdRequestDto.getName(), searchIdRequestDto.getEmail());
+        return user;
+    }
+
+    public User searchPw(SearchPwRequestDto searchPwRequestDto) {
+        User user = userRepository.findByNameAndLoginIdAndEmail(
+                searchPwRequestDto.getName(),
+                searchPwRequestDto.getLoginId(),
+                searchPwRequestDto.getEmail()
+        );
         return user;
     }
 }
