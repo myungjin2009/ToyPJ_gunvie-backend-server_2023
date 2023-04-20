@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface EstimateRepository extends JpaRepository<Estimate, EstimateEmbed> {
 
@@ -19,5 +21,8 @@ public interface EstimateRepository extends JpaRepository<Estimate, EstimateEmbe
 
     @Query("SELECT u FROM Estimate u WHERE u.estimate.user = :user")
     Page<Estimate> findByUser(@Param("user") User user, Pageable pageable);
+
+    @Query("SELECT u FROM Estimate u WHERE u.estimate.movie = :movie")
+    List<Estimate> findByMovieId(@Param("movie")Movie movie);
 
 }

@@ -218,7 +218,7 @@ public class UserController {
         return dto;
     }
 
-    @PostMapping("/reset_pw")
+    @PatchMapping("/change_pw")
     public DefaultDto resetPw(@RequestBody ResetPwRequestDto resetPwRequestDto, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
         User user = (User) httpSession.getAttribute("auth" + EmailType.FIND_PW.name());
@@ -305,6 +305,28 @@ public class UserController {
             dto.setMessage("정상적으로 불러왔습니다.");
             dto.setPostLists(postListList);
         }
+        return dto;
+    }
+
+    @DeleteMapping("/withdrawal")
+    public DefaultDto userWithdrawal(HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User user = (User) httpSession.getAttribute("loginSession");
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            return dto;
+        }
+
+        boolean result = userService.deleteUser(user);
+        if (!result) {
+            dto.setCode(500);
+            dto.setMessage("무언가 잘못되었습니다!");
+            return dto;
+        }
+        dto.setCode(200);
+        dto.setMessage("회원정보가 삭제되었습니다. 로그인 세션 또한 삭제되었습니다.");
+        httpSession.invalidate();
         return dto;
     }
 }

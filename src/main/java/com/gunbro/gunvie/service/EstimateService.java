@@ -5,6 +5,7 @@ import com.gunbro.gunvie.model.jpa.Estimate;
 import com.gunbro.gunvie.model.jpa.EstimateEmbed;
 import com.gunbro.gunvie.model.jpa.Movie;
 import com.gunbro.gunvie.model.jpa.User;
+import com.gunbro.gunvie.module.Parse;
 import com.gunbro.gunvie.repository.EstimateRepository;
 import com.gunbro.gunvie.repository.MovieRepository;
 import com.gunbro.gunvie.repository.UserRepository;
@@ -14,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class EstimateService {
@@ -62,5 +66,12 @@ public class EstimateService {
     public Page<Estimate> showMyReview(User user, int page) {
         Pageable pageable = PageRequest.of(page, 9, Sort.by(Sort.Direction.DESC,"createdAt"));
         return estimateRepository.findByUser(user, pageable);
+    }
+
+    public List<Estimate> getReview(String date, int rank) {
+        LocalDate convertDate = Parse.StringToLocalDateParse(date);
+        Movie movie = movieRepository.findByRangeDateAndRankMv(convertDate, rank);
+        if(movie == null) return null;
+        return estimateRepository.findByMovieId(movie);
     }
 }

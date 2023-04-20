@@ -6,6 +6,8 @@ import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Post.AddPostRequestDto;
 import com.gunbro.gunvie.model.responseDto.Post.AddImageResponseDto;
 import com.gunbro.gunvie.model.responseDto.Post.AddPostResponseDto;
+import com.gunbro.gunvie.model.responseDto.Post.PostList;
+import com.gunbro.gunvie.model.responseDto.Post.PostListResponseDto;
 import com.gunbro.gunvie.module.FileCheck;
 import com.gunbro.gunvie.service.EstimateService;
 import jakarta.servlet.http.HttpSession;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -105,5 +109,30 @@ public class PostController {
         dto.setFilePath(fvConvert);
         return dto;
 
+    }
+
+
+
+    @GetMapping("/fetch")
+    public PostListResponseDto getEstimateData(@RequestParam String date, @RequestParam int rank) {
+        PostListResponseDto dto = new PostListResponseDto();
+        List<Estimate> estimates = estimateService.getReview(date,rank);
+        if (estimates == null) {
+            dto.setCode(200);
+            dto.setMessage("해당하는 값이 없습니다.");
+            return dto;
+        }
+
+        //TODO Stream 으로 코드 리팩토링 하기..
+        List<PostList> postListList = new ArrayList<>();
+        if (!estimates.isEmpty()) {
+            for (Estimate estimate : estimates) {
+                postListList.add(new PostList(estimate));
+            }
+        }
+        dto.setCode(200);
+        dto.setMessage("정상적으로 불러왔습니다.");
+        dto.setPostLists(postListList);
+        return dto;
     }
 }

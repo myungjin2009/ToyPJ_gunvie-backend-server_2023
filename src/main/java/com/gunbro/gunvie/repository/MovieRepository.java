@@ -11,5 +11,9 @@ import java.util.List;
 public interface MovieRepository extends JpaRepository<Movie,Long> {
     List<Movie> findByRangeDate(LocalDate date);
 
+    Movie findByRangeDateAndRankMv(LocalDate date, int rank);
+
     Movie findByName(String name);
+
+
 }

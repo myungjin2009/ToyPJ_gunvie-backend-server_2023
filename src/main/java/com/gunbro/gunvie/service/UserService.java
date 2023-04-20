@@ -31,7 +31,7 @@ public class UserService {
         String passwordEncoded = bCryptService.encodeBcrypt(user.getPassword());
         user.setPassword(passwordEncoded);
 
-        //Try-Catch문을 사용하면 정상적인 RollBack루틴이 되지 않아 문법오류가 발생한다.
+        //Transactional 메소드에서 Try-Catch문을 사용하면 정상적인 RollBack루틴이 되지 않아 문법오류가 발생한다.
         //TODO:그렇다면 여기서는 예외처리를 어떻게 해야 할까?
 
 //        try{
@@ -78,5 +78,11 @@ public class UserService {
                 searchPwRequestDto.getLoginId(),
                 searchPwRequestDto.getEmail()
         );
+    }
+
+    @Transactional
+    public boolean deleteUser(User user) {
+        userRepository.delete(user);
+        return true;
     }
 }
