@@ -9,6 +9,10 @@ import com.gunbro.gunvie.repository.EstimateRepository;
 import com.gunbro.gunvie.repository.MovieRepository;
 import com.gunbro.gunvie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,5 +57,10 @@ public class EstimateService {
         Estimate newEstimate = estimateRepository.save(estimate);
         if(!newEstimate.getImages().equals(convertFileName)) return null;
         return newEstimate;
+    }
+
+    public Page<Estimate> showMyReview(User user, int page) {
+        Pageable pageable = PageRequest.of(page, 9, Sort.by(Sort.Direction.DESC,"createdAt"));
+        return estimateRepository.findByUser(user, pageable);
     }
 }

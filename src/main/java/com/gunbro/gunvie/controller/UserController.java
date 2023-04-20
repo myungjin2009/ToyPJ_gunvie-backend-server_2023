@@ -2,6 +2,7 @@ package com.gunbro.gunvie.controller;
 
 import com.gunbro.gunvie.config.enumData.EmailType;
 import com.gunbro.gunvie.config.enumData.FollowType;
+import com.gunbro.gunvie.model.jpa.Estimate;
 import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Email;
@@ -12,12 +13,13 @@ import com.gunbro.gunvie.model.requestDto.User.SearchPwRequestDto;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserList;
 import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserResponseDto;
+import com.gunbro.gunvie.model.responseDto.Post.PostList;
+import com.gunbro.gunvie.model.responseDto.Post.PostListResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
-import com.gunbro.gunvie.service.BCryptService;
+import com.gunbro.gunvie.service.EstimateService;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +43,14 @@ public class UserController {
     @Autowired
     FollowService followService;
 
+    @Autowired
+    EstimateService estimateService;
+
     @GetMapping("/follower")
     public FollowUserResponseDto showFollower(@RequestParam int page, HttpSession httpSession) {
         FollowUserResponseDto dto = new FollowUserResponseDto();
 
-        User user = (User)httpSession.getAttribute("loginSession");
+        User user = (User) httpSession.getAttribute("loginSession");
         if (user == null) {
             dto.setCode(400);
             dto.setMessage("로그인이 필요합니다.");
@@ -72,7 +77,7 @@ public class UserController {
     public FollowUserResponseDto showFollowing(@RequestParam int page, HttpSession httpSession) {
         FollowUserResponseDto dto = new FollowUserResponseDto();
 
-        User user2 = (User)httpSession.getAttribute("loginSession");
+        User user2 = (User) httpSession.getAttribute("loginSession");
         if (user2 == null) {
             dto.setCode(400);
             dto.setMessage("로그인이 필요합니다.");
@@ -98,7 +103,7 @@ public class UserController {
     @PostMapping("/join")
     public DefaultDto userJoin(@RequestBody User user, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
-        Email verifyResult = (Email) httpSession.getAttribute("emailVerify"+ EmailType.VERIFY_NUMBER.name());
+        Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.VERIFY_NUMBER.name());
         //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
         if (verifyResult == null) {
             dto.setCode(403);
@@ -150,7 +155,7 @@ public class UserController {
     public DefaultDto userLogin(@RequestBody LocalLogin localLogin, HttpServletRequest request) {
         DefaultDto dto = new DefaultDto();
 
-        if(localLogin.getLoginId() == null || localLogin.getPassword() == null) {
+        if (localLogin.getLoginId() == null || localLogin.getPassword() == null) {
             dto.setCode(403);
             dto.setMessage("아이디 또는 비밀번호 누락");
             return dto;
@@ -172,7 +177,7 @@ public class UserController {
     }
 
     @PostMapping("/search_pw")
-    public DefaultDto searchPw(@RequestBody SearchPwRequestDto searchPwRequestDto, HttpSession httpSession){
+    public DefaultDto searchPw(@RequestBody SearchPwRequestDto searchPwRequestDto, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
         Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.FIND_PW.name());
         //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
@@ -207,7 +212,7 @@ public class UserController {
 
         dto.setCode(200);
         dto.setMessage("DB에서 검색되었습니다.");
-        httpSession.setAttribute("auth"+EmailType.FIND_PW.name(), user);
+        httpSession.setAttribute("auth" + EmailType.FIND_PW.name(), user);
         //httpSession.invalidate();
 
         return dto;
@@ -216,7 +221,7 @@ public class UserController {
     @PostMapping("/reset_pw")
     public DefaultDto resetPw(@RequestBody ResetPwRequestDto resetPwRequestDto, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
-        User user = (User)httpSession.getAttribute("auth"+EmailType.FIND_PW.name());
+        User user = (User) httpSession.getAttribute("auth" + EmailType.FIND_PW.name());
         //TODO : 중복 코드!
         if (user == null) {
             dto.setCode(403);
@@ -225,7 +230,7 @@ public class UserController {
         }
         user.setPassword(resetPwRequestDto.getChangePw());
         Boolean result = userService.updatePassword(user);
-        if(!result) {
+        if (!result) {
             dto.setCode(500);
             dto.setMessage("서버측에서 무언가 잘못되었습니다!");
             return dto;
@@ -275,6 +280,31 @@ public class UserController {
 
         //httpSession.invalidate();
 
+        return dto;
+    }
+
+    @GetMapping("/post_list")
+    public PostListResponseDto userPostList(@RequestParam int page, HttpSession httpSession) {
+        PostListResponseDto dto = new PostListResponseDto();
+        User user = (User) httpSession.getAttribute("loginSession");
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            return dto;
+        }
+        else {
+            //TODO Stream 으로 코드 리팩토링 하기..
+            Page<Estimate> estimates = estimateService.showMyReview(user, page);
+            List<PostList> postListList = new ArrayList<>();
+            if (!estimates.isEmpty()) {
+                for (Estimate estimate : estimates.getContent()) {
+                    postListList.add(new PostList(estimate));
+                }
+            }
+            dto.setCode(200);
+            dto.setMessage("정상적으로 불러왔습니다.");
+            dto.setPostLists(postListList);
+        }
         return dto;
     }
 }
