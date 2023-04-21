@@ -60,12 +60,8 @@ public class PostController {
                                            HttpSession httpSession) throws IOException {
         //TODO 파일 용량 초과시 예외처리
         AddImageResponseDto dto = new AddImageResponseDto();
-        //그와 동시에 이미지는 서버에 저장 (multipartFile.transferTo)
-        //TEST PRINT
-        System.out.println("add_img 실행됨");
-        System.out.println("movieId = " + movieId);
-        System.out.println("multipartFiles = " + multipartFile.getContentType());
-        //TEST PRINT
+        //이미지 이름에 중복방지 UUID를 추가하여 DB에 저장
+        //그와 동시에 이미지 파일은 서버에 저장 (multipartFile.transferTo)
 
         User user = (User)httpSession.getAttribute("loginSession");
         if(user == null) {
