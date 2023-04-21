@@ -59,6 +59,7 @@ public class PostController {
                                            @RequestParam(value = "files") MultipartFile multipartFile,
                                            HttpSession httpSession) throws IOException {
         //TODO 파일 용량 초과시 예외처리
+        //TODO 잘못된 파일 수신 시 예외처리 (org.springframework.web.multipart.support.MissingServletRequestPartException: Required part 'files' is not present.)
         AddImageResponseDto dto = new AddImageResponseDto();
         //이미지 이름에 중복방지 UUID를 추가하여 DB에 저장
         //그와 동시에 이미지 파일은 서버에 저장 (multipartFile.transferTo)
