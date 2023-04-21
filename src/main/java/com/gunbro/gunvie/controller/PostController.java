@@ -26,7 +26,7 @@ public class PostController {
     @Autowired
     private EstimateService estimateService;
 
-    @PostMapping("/add_review")
+    @PostMapping("/review")
     public AddPostResponseDto addReview(@RequestBody AddPostRequestDto addPostRequestDto, HttpSession httpSession) {
         AddPostResponseDto dto = new AddPostResponseDto();
         User user = (User)httpSession.getAttribute("loginSession");
@@ -54,7 +54,7 @@ public class PostController {
         return dto;
     }
 
-    @PostMapping("/add_img")
+    @PostMapping("/image")
     public AddImageResponseDto uploadImage(@RequestParam(value = "post_id") Long movieId ,
                                            @RequestParam(value = "files") MultipartFile multipartFile,
                                            HttpSession httpSession) throws IOException {
