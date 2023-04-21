@@ -4,6 +4,7 @@ import com.gunbro.gunvie.config.enumData.FileType;
 import com.gunbro.gunvie.model.jpa.Estimate;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Post.AddPostRequestDto;
+import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.model.responseDto.Post.AddImageResponseDto;
 import com.gunbro.gunvie.model.responseDto.Post.AddPostResponseDto;
 import com.gunbro.gunvie.model.responseDto.Post.PostList;
@@ -60,6 +61,7 @@ public class PostController {
                                            HttpSession httpSession) throws IOException {
         //TODO 파일 용량 초과시 예외처리
         //TODO 잘못된 파일 수신 시 예외처리 (org.springframework.web.multipart.support.MissingServletRequestPartException: Required part 'files' is not present.)
+        //TODO Replacement 에 대비할 것 (사진 업로드 반복시, 기존 사진 파일은 삭제해야지)
         AddImageResponseDto dto = new AddImageResponseDto();
         //이미지 이름에 중복방지 UUID를 추가하여 DB에 저장
         //그와 동시에 이미지 파일은 서버에 저장 (multipartFile.transferTo)
@@ -130,6 +132,29 @@ public class PostController {
         dto.setCode(200);
         dto.setMessage("정상적으로 불러왔습니다.");
         dto.setPostLists(postListList);
+        return dto;
+    }
+
+    @DeleteMapping("/image")
+    public DefaultDto deleteImage(@RequestParam(name="post_id") Long movieId, HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+
+        User user = (User)httpSession.getAttribute("loginSession");
+        //TODO 중복 코드!
+        if(user == null) {
+            dto.setCode(403);
+            dto.setMessage("로그인이 되어있지 않습니다.");
+            return dto;
+        }
+
+        String result = estimateService.deleteImage(user, movieId);
+        if(result.isEmpty()) {
+            dto.setCode(400);
+            dto.setMessage("삭제할 사진이 없습니다.");
+            return dto;
+        }
+        dto.setCode(200);
+        dto.setMessage("사진이 삭제되었습니다.");
         return dto;
     }
 }

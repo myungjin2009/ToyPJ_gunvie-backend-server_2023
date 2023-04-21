@@ -24,5 +24,4 @@ public interface EstimateRepository extends JpaRepository<Estimate, EstimateEmbe
 
     @Query("SELECT u FROM Estimate u WHERE u.estimate.movie = :movie")
     List<Estimate> findByMovieId(@Param("movie")Movie movie);
-
 }

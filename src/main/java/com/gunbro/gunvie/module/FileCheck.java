@@ -13,6 +13,11 @@ import java.util.UUID;
 
 public class FileCheck {
 
+    static final String rootPath = System.getProperty("user.dir") + File.separator
+            + "src" + File.separator
+            + "main" + File.separator
+            + "resources" + File.separator;
+
     //이미지 유효 검사
     //업로드 된 이미지가 유효한지, 깨진 파일은 아닌지 검사하는 메소드
     public boolean imageCheck(MultipartFile multipartFile) throws IOException {
@@ -37,22 +42,28 @@ public class FileCheck {
 
     //파일 저장
     public String saveFile(MultipartFile multipartFile, String fileName, FileType fileType) {
-        String path = System.getProperty("user.dir") + File.separator
-                                        + "src" + File.separator
-                                        + "main" + File.separator
-                                        + "resources" + File.separator;
+        String overridePath = rootPath;
 
         if(fileType == FileType.POSTIMAGE) {
-            path += "post_image" + File.separator + fileName;
+            overridePath += "post_image" + File.separator + fileName;
         }
 
-        File file = new File(path);
+        File file = new File(overridePath);
         if (!file.exists()) file.mkdirs(); //TODO 성능에 영향을 주지 않을까? 스프링부트 시작시에 한 번만 체크 하면 될 것 같은데..
         try {
             multipartFile.transferTo(file);
         } catch (Exception e) {
             return null;
         }
-        return path;
+        return overridePath;
+    }
+
+    public boolean deleteFile(String fileName, FileType fileType) {
+        String overridePath = rootPath;
+
+        if(fileType == FileType.POSTIMAGE) {
+            overridePath += "post_image" + File.separator + fileName;
+        }
+        return new File(overridePath).delete();
     }
 }
