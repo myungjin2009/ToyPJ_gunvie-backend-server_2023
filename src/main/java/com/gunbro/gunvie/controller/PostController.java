@@ -3,7 +3,7 @@ package com.gunbro.gunvie.controller;
 import com.gunbro.gunvie.config.enumData.FileType;
 import com.gunbro.gunvie.model.jpa.Estimate;
 import com.gunbro.gunvie.model.jpa.User;
-import com.gunbro.gunvie.model.requestDto.Post.AddPostRequestDto;
+import com.gunbro.gunvie.model.requestDto.Post.AddEditPostRequestDto;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import com.gunbro.gunvie.model.responseDto.Post.AddImageResponseDto;
 import com.gunbro.gunvie.model.responseDto.Post.AddPostResponseDto;
@@ -28,21 +28,20 @@ public class PostController {
     private EstimateService estimateService;
 
     @PostMapping("/review")
-    public AddPostResponseDto addReview(@RequestBody AddPostRequestDto addPostRequestDto, HttpSession httpSession) {
+    public AddPostResponseDto addReview(@RequestBody AddEditPostRequestDto addEditPostRequestDto, HttpSession httpSession) {
         AddPostResponseDto dto = new AddPostResponseDto();
         User user = (User)httpSession.getAttribute("loginSession");
         if (user == null) {
             dto.setCode(400);
             dto.setMessage("로그인이 필요합니다.");
-
             return dto;
         }
             
         int result = estimateService.addReview(
                 user,
-                addPostRequestDto.getMovieId(),
-                addPostRequestDto.getText(),
-                addPostRequestDto.getStartRating());
+                addEditPostRequestDto.getMovieId(),
+                addEditPostRequestDto.getText(),
+                addEditPostRequestDto.getStartRating());
 
         if(result == 1) {
             dto.setCode(400);
@@ -54,6 +53,27 @@ public class PostController {
         dto.setMessage("정상적으로 등록 되었습니다.");
         return dto;
     }
+
+    @PatchMapping("/review")
+    public DefaultDto editReview(@RequestBody AddEditPostRequestDto addEditPostRequestDto, HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User user = (User)httpSession.getAttribute("loginSession");
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            return dto;
+        }
+        boolean result = estimateService.editEstimate(addEditPostRequestDto, user);
+        if (!result) {
+            dto.setCode(400);
+            dto.setMessage("해당 영화가 없거나, 유저가 해당 영화에 리뷰를 작성하지 않았습니다.");
+            return dto;
+        }
+        dto.setCode(200);
+        dto.setMessage("수정 되었습니다.");
+        return dto;
+    }
+
 
     @PostMapping("/image")
     public AddImageResponseDto uploadImage(@RequestParam(value = "post_id") Long movieId ,

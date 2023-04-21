@@ -1,6 +1,6 @@
 package com.gunbro.gunvie.model.requestDto.Post;
 
-public class AddPostRequestDto {
+public class AddEditPostRequestDto {
     private Long movieId;
 
     private String text;

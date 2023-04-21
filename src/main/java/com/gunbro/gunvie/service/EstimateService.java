@@ -6,6 +6,7 @@ import com.gunbro.gunvie.model.jpa.Estimate;
 import com.gunbro.gunvie.model.jpa.EstimateEmbed;
 import com.gunbro.gunvie.model.jpa.Movie;
 import com.gunbro.gunvie.model.jpa.User;
+import com.gunbro.gunvie.model.requestDto.Post.AddEditPostRequestDto;
 import com.gunbro.gunvie.module.FileCheck;
 import com.gunbro.gunvie.module.Parse;
 import com.gunbro.gunvie.repository.EstimateRepository;
@@ -52,6 +53,24 @@ public class EstimateService {
 
         estimateRepository.save(estimate1);
         return result;
+    }
+
+    @Transactional
+    public boolean editEstimate(AddEditPostRequestDto addEditPostRequestDto, User user) {
+        //TODO 중복코드!
+        Movie movie = movieRepository.findById(addEditPostRequestDto.getMovieId()).orElse(null);
+        if(movie == null) return false;
+        Estimate estimate = estimateRepository.findReviewByMovieId(user, movie);
+        if(estimate == null) return false;
+
+        if(addEditPostRequestDto.getText() != null || !addEditPostRequestDto.getText().isEmpty()) {
+            estimate.setText(addEditPostRequestDto.getText());
+        }
+        if(addEditPostRequestDto.getStartRating() != 0 || addEditPostRequestDto.getStartRating() == estimate.getStartRating()) {
+            estimate.setStartRating(addEditPostRequestDto.getStartRating());
+        }
+        estimateRepository.save(estimate);
+        return true;
     }
 
     public Estimate findReviewByMovieId(User user, Long movieId) {
