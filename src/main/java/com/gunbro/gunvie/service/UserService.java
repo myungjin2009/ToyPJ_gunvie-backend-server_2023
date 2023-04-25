@@ -51,6 +51,10 @@ public class UserService {
         return true;
     }
 
+    public User findUserById(String loginId) {
+        return userRepository.findByLoginId(loginId);
+    }
+
     public User loginLocalUser(LocalLogin localLogin) {
         User user = userRepository.findByLoginId(localLogin.getLoginId());
         if(user == null) {

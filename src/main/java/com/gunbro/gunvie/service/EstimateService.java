@@ -85,7 +85,7 @@ public class EstimateService {
         return newEstimate;
     }
 
-    public Page<Estimate> showMyReview(User user, int page) {
+    public Page<Estimate> showUserReview(User user, int page) {
         Pageable pageable = PageRequest.of(page, 9, Sort.by(Sort.Direction.DESC,"createdAt"));
         return estimateRepository.findByUser(user, pageable);
     }

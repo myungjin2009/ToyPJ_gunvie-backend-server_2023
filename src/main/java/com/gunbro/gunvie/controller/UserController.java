@@ -16,6 +16,7 @@ import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserResponseDto;
 import com.gunbro.gunvie.model.responseDto.Post.PostList;
 import com.gunbro.gunvie.model.responseDto.Post.PostListResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
+import com.gunbro.gunvie.model.responseDto.User.UserPostlistResponseDto;
 import com.gunbro.gunvie.service.EstimateService;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -294,7 +295,7 @@ public class UserController {
         }
         else {
             //TODO Stream 으로 코드 리팩토링 하기..
-            Page<Estimate> estimates = estimateService.showMyReview(user, page);
+            Page<Estimate> estimates = estimateService.showUserReview(user, page);
             List<PostList> postListList = new ArrayList<>();
             if (!estimates.isEmpty()) {
                 for (Estimate estimate : estimates.getContent()) {
@@ -327,6 +328,37 @@ public class UserController {
         dto.setCode(200);
         dto.setMessage("회원정보가 삭제되었습니다. 로그인 세션 또한 삭제되었습니다.");
         httpSession.invalidate();
+        return dto;
+    }
+
+    @GetMapping("/{userID}/post")
+    public UserPostlistResponseDto getUserPostList(@PathVariable("userID") String userID, @RequestParam int page) {
+        UserPostlistResponseDto dto = new UserPostlistResponseDto();
+
+        User user = userService.findUserById(userID);
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("해당하는 유저 정보가 없습니다.");
+            return dto;
+        }
+        //TODO Stream 으로 코드 리팩토링 하기..
+        //TODO 중복코드!
+        Page<Estimate> estimates = estimateService.showUserReview(user, page);
+        List<PostList> postListList = new ArrayList<>();
+        if (!estimates.isEmpty()) {
+            for (Estimate estimate : estimates.getContent()) {
+                postListList.add(new PostList(estimate));
+            }
+        }
+
+        user.setPassword(null);
+        user.setUpdatedAt(null);
+        user.setLoginType(null);
+
+        dto.setCode(200);
+        dto.setMessage("정상적으로 불러왔습니다. page: " + page);
+        dto.setUser(user);
+        dto.setPostList(postListList);
         return dto;
     }
 }
