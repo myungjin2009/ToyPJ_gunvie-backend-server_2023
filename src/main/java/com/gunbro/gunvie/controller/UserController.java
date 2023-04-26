@@ -19,6 +19,7 @@ import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.UserPostlistResponseDto;
 import com.gunbro.gunvie.repository.UserRepository;
 import com.gunbro.gunvie.service.EstimateService;
+import com.gunbro.gunvie.service.FollowService;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

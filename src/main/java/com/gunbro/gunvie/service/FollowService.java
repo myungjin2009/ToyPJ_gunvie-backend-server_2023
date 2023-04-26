@@ -1,4 +1,4 @@
-package com.gunbro.gunvie.controller;
+package com.gunbro.gunvie.service;
 
 import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
