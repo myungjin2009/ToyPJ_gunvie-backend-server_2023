@@ -296,8 +296,7 @@ public class UserController {
             dto.setCode(400);
             dto.setMessage("로그인이 필요합니다.");
             return dto;
-        }
-        else {
+        } else {
             //TODO Stream 으로 코드 리팩토링 하기..
             Page<Estimate> estimates = estimateService.showUserReview(user, page);
             List<PostList> postListList = new ArrayList<>();
@@ -418,4 +417,31 @@ public class UserController {
         return dto;
     }
 
+    @PostMapping("/{userID}/profile/follow")
+    public DefaultDto userFollow(@PathVariable("userID") String userId, HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User loginUser = (User) httpSession.getAttribute("loginSession");
+        if (loginUser == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            return dto;
+        }
+        User toFollowUser = userRepository.findByLoginId(userId);
+        if (toFollowUser == null) {
+            dto.setCode(400);
+            dto.setMessage("팔로우 하려는 유저 정보가 없습니다.");
+            return dto;
+        }
+
+
+        int result = followService.userFollow(loginUser, toFollowUser);
+        if (result == 1) {
+            dto.setCode(400);
+            dto.setMessage("해당 유저는 이미 Follow 되어있습니다.");
+            return dto;
+        }
+        dto.setCode(200);
+        dto.setMessage("Follow 하였습니다.  " + loginUser.getLoginId() + " -> " + toFollowUser.getLoginId());
+        return dto;
+    }
 }

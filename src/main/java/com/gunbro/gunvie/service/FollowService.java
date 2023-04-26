@@ -1,6 +1,7 @@
 package com.gunbro.gunvie.service;
 
 import com.gunbro.gunvie.model.jpa.Follow;
+import com.gunbro.gunvie.model.jpa.FollowEmbed;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.repository.FollowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,21 @@ public class FollowService {
             return null;
         }
         return result;
+    }
+
+    public int userFollow(User loginUser, User toFollowUser) {
+        Follow findResult = followRepository.findFollowOne(loginUser, toFollowUser);
+        if(findResult != null) {
+            return 1;
+        }
+
+        FollowEmbed followEmbed = new FollowEmbed();
+        followEmbed.setFollower(loginUser);
+        followEmbed.setFollowing(toFollowUser);
+
+        Follow follow = new Follow();
+        follow.setFollowId(followEmbed);
+        followRepository.save(follow);
+        return 0;
     }
 }
