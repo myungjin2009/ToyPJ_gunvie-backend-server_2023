@@ -51,4 +51,14 @@ public class FollowService {
         followRepository.save(follow);
         return 0;
     }
+
+    public void deleteFollow(User loginUser, User toDeleteFollowUser) {
+        FollowEmbed followEmbed = new FollowEmbed();
+        followEmbed.setFollower(loginUser);
+        followEmbed.setFollowing(toDeleteFollowUser);
+
+        Follow follow = new Follow();
+        follow.setFollowId(followEmbed);
+        followRepository.delete(follow);
+    }
 }

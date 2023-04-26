@@ -7,6 +7,7 @@ import com.gunbro.gunvie.model.jpa.Follow;
 import com.gunbro.gunvie.model.jpa.User;
 import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.requestDto.LocalLogin;
+import com.gunbro.gunvie.model.requestDto.User.DeleteFollowUserRequestDto;
 import com.gunbro.gunvie.model.requestDto.User.ResetPwRequestDto;
 import com.gunbro.gunvie.model.requestDto.User.SearchIdRequestDto;
 import com.gunbro.gunvie.model.requestDto.User.SearchPwRequestDto;
@@ -432,8 +433,6 @@ public class UserController {
             dto.setMessage("팔로우 하려는 유저 정보가 없습니다.");
             return dto;
         }
-
-
         int result = followService.userFollow(loginUser, toFollowUser);
         if (result == 1) {
             dto.setCode(400);
@@ -442,6 +441,48 @@ public class UserController {
         }
         dto.setCode(200);
         dto.setMessage("Follow 하였습니다.  " + loginUser.getLoginId() + " -> " + toFollowUser.getLoginId());
+        return dto;
+    }
+
+    @DeleteMapping("/follower")
+    public DefaultDto deleteFollower(@RequestBody DeleteFollowUserRequestDto deleteFollowUser, HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User loginUser = (User) httpSession.getAttribute("loginSession");
+        if (loginUser == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            return dto;
+        }
+        User toDeleteFollowUser = userRepository.findByLoginId(deleteFollowUser.getLoginId());
+        if (toDeleteFollowUser == null) {
+            dto.setCode(400);
+            dto.setMessage("팔로우 삭제 하려는 유저 정보가 없습니다.");
+            return dto;
+        }
+        followService.deleteFollow(toDeleteFollowUser, loginUser);
+        dto.setCode(200);
+        dto.setMessage("Follow 해지 하였습니다.  " + toDeleteFollowUser.getLoginId() + " X->X " + loginUser.getLoginId());
+        return dto;
+    }
+
+    @DeleteMapping("/following")
+    public DefaultDto deleteFollowing(@RequestBody DeleteFollowUserRequestDto deleteFollowUser, HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User loginUser = (User) httpSession.getAttribute("loginSession");
+        if (loginUser == null) {
+            dto.setCode(400);
+            dto.setMessage("로그인이 필요합니다.");
+            return dto;
+        }
+        User toDeleteFollowUser = userRepository.findByLoginId(deleteFollowUser.getLoginId());
+        if (toDeleteFollowUser == null) {
+            dto.setCode(400);
+            dto.setMessage("팔로우 삭제 하려는 유저 정보가 없습니다.");
+            return dto;
+        }
+        followService.deleteFollow(loginUser, toDeleteFollowUser);
+        dto.setCode(200);
+        dto.setMessage("Follow 해지 하였습니다.  " + loginUser.getLoginId() + " X->X " + toDeleteFollowUser.getLoginId());
         return dto;
     }
 }
