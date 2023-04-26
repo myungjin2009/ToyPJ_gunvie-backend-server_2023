@@ -27,9 +27,6 @@ import java.util.List;
 public class EstimateService {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private MovieRepository movieRepository;
 
     @Autowired
