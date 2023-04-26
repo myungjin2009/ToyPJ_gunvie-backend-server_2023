@@ -17,6 +17,7 @@ import com.gunbro.gunvie.model.responseDto.Post.PostList;
 import com.gunbro.gunvie.model.responseDto.Post.PostListResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.UserPostlistResponseDto;
+import com.gunbro.gunvie.repository.UserRepository;
 import com.gunbro.gunvie.service.EstimateService;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +47,8 @@ public class UserController {
 
     @Autowired
     EstimateService estimateService;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/follower")
     public FollowUserResponseDto showFollower(@RequestParam int page, HttpSession httpSession) {
@@ -361,4 +364,57 @@ public class UserController {
         dto.setPostList(postListList);
         return dto;
     }
+
+    @GetMapping("/{userID}/profile/follower")
+    public FollowUserResponseDto getUserFollower(@PathVariable("userID") String userId, @RequestParam int page) {
+        FollowUserResponseDto dto = new FollowUserResponseDto();
+
+        User user = userRepository.findByLoginId(userId);
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("해당하는 유저 정보가 없습니다.");
+            return dto;
+        }
+
+        List<FollowUserList> followUserLists = new ArrayList<>();
+        Page<Follow> result = followService.showFollowerUsers(page, user);
+        if (result != null) {
+            for (Follow f : result.getContent()) {
+                followUserLists.add(new FollowUserList(f, FollowType.FOLLOWER));
+            }
+        }
+
+        dto.setCode(200);
+        dto.setMessage("정상적으로 불러왔습니다. (최근 추가된 순서대로)");
+        dto.setList(followUserLists);
+
+        return dto;
+    }
+
+    @GetMapping("/{userID}/profile/following")
+    public FollowUserResponseDto getUserFollowing(@PathVariable("userID") String userId, @RequestParam int page) {
+        FollowUserResponseDto dto = new FollowUserResponseDto();
+
+        User user = userRepository.findByLoginId(userId);
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("해당하는 유저 정보가 없습니다.");
+            return dto;
+        }
+
+        List<FollowUserList> followUserLists = new ArrayList<>();
+        Page<Follow> result = followService.showFollowingUsers(page, user);
+        if (result != null) {
+            for (Follow f : result.getContent()) {
+                followUserLists.add(new FollowUserList(f, FollowType.FOLLOWING));
+            }
+        }
+
+        dto.setCode(200);
+        dto.setMessage("정상적으로 불러왔습니다. (최근 추가된 순서대로)");
+        dto.setList(followUserLists);
+
+        return dto;
+    }
+
 }
