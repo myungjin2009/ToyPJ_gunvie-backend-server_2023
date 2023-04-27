@@ -18,8 +18,9 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-application.properties
-application-prod.properties
+src/main/resources/application.properties
+src/main/resources/application-prod.properties
+src/main/resources/keystore.p12
 .idea
 *.iws
 *.iml
