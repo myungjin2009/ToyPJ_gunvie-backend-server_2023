@@ -60,7 +60,7 @@ Notion과 Postman을 적극 활용하여, 프론트엔드 단과 적극적인 �
 ![F-3-MovieReviewPage](resources/images/F-3.png)
 ![J-1-UserReviewPage](resources/images/J-1.png)
 
-## 서버 구성도 (좀 더 세세하게 수정 필요..)
+## 서버 구성도
 ![서버_구성도](resources/images/ServerDiagram.png)
 
 ## API 설계서
