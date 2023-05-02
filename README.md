@@ -6,7 +6,7 @@
 ## 정보
 - 이 곳은 Gunvie 프로젝트의 Backend 서버입니다.
 - frontend 직접적으로 통신하는 서버.
-- [gunvie-frontend 바로가기](https://github.com/gun-bro98/gunvie-frontend)
+- [gunvie-frontend Repository 바로가기](https://github.com/gun-bro98/gunvie-frontend)
 
 ## 개발 환경
 - OS : Windows10 | MacBookAir 2015 12.6.5
@@ -20,11 +20,16 @@
 ## 서버 실행방법
 - 깃 리포지토리에서 해당 main 브랜치를 다운로드 한다.
 - src-main-resources 폴더에, 따로 저장된 3가지 보안 파일을 넣어준다.
-- application.properties | application-prod.properties | keystore.p12
-- properties 파일을 참조하여 DB를 셋팅해준다.
+- application-dev.properties | application-prod.properties | keystore.p12
+- properties 파일을 참조하여 DB와 SMTP등 필요한 것들을 셋팅해준다.
+- 프로파일 설정이 필요하다. -Dspring.profiles.active= dev | prod
 - src-main-java-com-gunbro-gunvie-GunvieApplication.class 를 들어가 실행하면 된다.
 - TLS가 적용된 버전은 keystore.p12에 명시된, 도메인이 준비된 서버가 필요하다.
 
+## 브랜치 전략
+- DDingJin(Dev) >> Staging >> main
+
+<br><br><br>
 
 
 
@@ -56,16 +61,16 @@ Notion과 Postman을 적극 활용하여, 프론트엔드 단과 적극적인 �
 ![J-1-UserReviewPage](resources/images/J-1.png)
 
 ## 서버 구성도 (좀 더 세세하게 수정 필요..)
-![서버_구성도](resources/images/서버_구성도.png)
+![서버_구성도](resources/images/ServerDiagram.png)
 
 ## API 설계서
-![서버_REST_API_설계서](resources/images/서버_REST_API_설계서.png)
+![서버_REST_API_설계서](resources/images/RestApiBP.png)
 
 ## ER 다이어그램
 ![ERD](resources/images/ERD.png)
 
 ## 페이지 정의서
-![페이지정의서](resources/images/페이지정의서.png)
+![페이지정의서](resources/images/PageBP.png)
 
 
 
@@ -77,4 +82,5 @@ Notion과 Postman을 적극 활용하여, 프론트엔드 단과 적극적인 �
  - 그러기 위해서는 기본기가 탄탄해야 한다는 것을 뼈저리게 느꼈다. 자바 기본문법을 더 익히고, 알고리즘 공부도 병행해야겠다.
  - 실력의 부족은 곧 중복코드를 남발하는 결과를 가져왔다. 로그인 세션 공통 예외처리를 할 줄 몰라서, 각 컨트롤러마다 예외처리 로직을 전부 중복 작성해주었다..
  - 스프링 공부를 계속 해나가며, 계속해서 리팩토링을 해볼 예정이다.
- - 뿐만 아니라, 혼자서 개발했을 때는 몰랐던 점들도 알게 되었다. 깃 브랜치 전략, 깃 컨벤션 등등.. 특히 API 설계서를 다 작성한 후, 몇 주뒤 API 주소를 수정할 일이 생겼을 때가 가장 난감했다. 이제와서 내 맘대로 수정하면 분명 기분 나쁠텐데.. 
+ - 뿐만 아니라, 혼자서 개발했을 때는 몰랐던 점들도 알게 되었다. 깃 브랜치 전략, 깃 컨벤션 등등.. 특히 API 설계서를 다 작성한 후, 몇 주뒤 API 주소를 수정할 일이 생겼을 때가 가장 난감했다. 이제와서 내 맘대로 수정하면 분명 기분 나쁠텐데..
+ - 분명 혼자서 개발할 때는 아무런 문제가 없었는데, 막상 Staging 서버를 올리고 나니 Runtime Exception 이 수도 없이 발생하였다. TDD가 얼마나 중요한지 뼈저리게 느꼈다.
