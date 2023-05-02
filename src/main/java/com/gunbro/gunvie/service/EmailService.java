@@ -14,7 +14,7 @@ public class EmailService {
     @Autowired
     JavaMailSender javaMailSender;
 
-    SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+    private SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
 
 
@@ -40,6 +40,11 @@ public class EmailService {
     private String sendMailFinally(String[] receiveList, String title, String content) {
         String result = "successful";
         try {
+            //0. 메일 발신자 설정
+            //TODO 매직 넘버 수정필요!
+            //TODO 이 메소드가 없으도 로컬에서는 문제가 없는데, 왜 서버에 올리면 예외가 발생할까?
+            simpleMailMessage.setFrom("farmtech0201@gmail.com");
+
             //1. 메일 수신자 설정
             simpleMailMessage.setTo(receiveList);
 
