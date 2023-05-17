@@ -53,7 +53,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/info")
+    @GetMapping("/auth")
     public UserInfoResponseDto getUserData(@RequestHeader("Cookie") String cookie, HttpSession httpSession) {
         UserInfoResponseDto dto = new UserInfoResponseDto();
         //이 코드는 필요가 없다.
