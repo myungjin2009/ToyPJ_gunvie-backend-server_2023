@@ -45,7 +45,9 @@ public class FileCheck {
         String overridePath = rootPath;
 
         if(fileType == FileType.POSTIMAGE) {
-            overridePath += "post_image" + File.separator + fileName;
+            overridePath += "post_images" + File.separator + fileName;
+        } else if(fileType == FileType.PROFILEIMAGE) {
+            overridePath += "profile_images" + File.separator + fileName;
         }
 
         File file = new File(overridePath);
@@ -61,9 +63,14 @@ public class FileCheck {
     public boolean deleteFile(String fileName, FileType fileType) {
         String overridePath = rootPath;
 
+
+        //TODO 중복 보드 (saveFile 메소드 내용과 동일)
         if(fileType == FileType.POSTIMAGE) {
-            overridePath += "post_image" + File.separator + fileName;
+            overridePath += "post_images" + File.separator + fileName;
+        } else if(fileType == FileType.PROFILEIMAGE) {
+            overridePath += "profile_images" + File.separator + fileName;
         }
+
         return new File(overridePath).delete();
     }
 }

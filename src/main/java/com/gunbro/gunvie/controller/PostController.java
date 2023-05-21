@@ -101,6 +101,7 @@ public class PostController {
         }
 
         //이미지 검사
+        //TODO new 함수는 비용이 크다. 그렇다고 Static 으로 하기에는 context switching에 문제가 생길 듯 하다 .?
         FileCheck fileCheck = new FileCheck();
         if(!fileCheck.imageCheck(multipartFile)){
             dto.setCode(403);
