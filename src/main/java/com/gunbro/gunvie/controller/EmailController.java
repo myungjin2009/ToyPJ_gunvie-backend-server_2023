@@ -3,12 +3,17 @@ package com.gunbro.gunvie.controller;
 import com.gunbro.gunvie.config.enumData.EmailType;
 import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
+import com.gunbro.gunvie.module.randomNumber.RandomNumberGenerator;
 import com.gunbro.gunvie.service.EmailService;
 import com.gunbro.gunvie.service.VerifyService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,27 +21,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
+
+@Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/email")
 public class EmailController {
 
-    //temp
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    VerifyService verifyService;
+    private final EmailService emailService;
+    private final VerifyService verifyService;
+    private final RandomNumberGenerator randomNumberGenerator;
+    @Value("${mail.verification.digit}")
+    private int verificationDigit;
 
     @PostMapping("/send")
     public DefaultDto sendEmail(@RequestBody Email email, HttpSession httpSession) {
-        EmailType type = email.getEmailType();
         DefaultDto dto;
+        EmailType type = email.getEmailType();
         switch(type) {
             case VERIFY_NUMBER,FIND_ID,FIND_PW -> {
-                //TODO 이메일 인증 : 난수발생기 모듈 만들기
-                String verifyNumber = "000000";
+                String verifyNumber = randomNumberGenerator.generate(verificationDigit);
                 dto = emailService.sendMailVerifyNumber(email,verifyNumber);
                 if(dto.getCode() == 200) {
                     email.setVerifyNumber(verifyNumber);

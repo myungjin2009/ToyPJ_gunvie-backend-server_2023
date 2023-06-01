@@ -2,19 +2,22 @@ package com.gunbro.gunvie.service;
 
 import com.gunbro.gunvie.model.requestDto.Email;
 import com.gunbro.gunvie.model.responseDto.DefaultDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
-    @Autowired
-    JavaMailSender javaMailSender;
-
-    private SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+    private final JavaMailSender javaMailSender;
+    private final SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+    @Value("${spring.mail.username}")
+    private String mailSenderName;
 
 
 
@@ -41,9 +44,8 @@ public class EmailService {
         String result = "successful";
         try {
             //0. 메일 발신자 설정
-            //TODO 매직 넘버 수정필요!
             //TODO 이 메소드가 없으도 로컬에서는 문제가 없는데, 왜 서버에 올리면 예외가 발생할까?
-            simpleMailMessage.setFrom("farmtech0201@gmail.com");
+            simpleMailMessage.setFrom(mailSenderName);
 
             //1. 메일 수신자 설정
             simpleMailMessage.setTo(receiveList);
