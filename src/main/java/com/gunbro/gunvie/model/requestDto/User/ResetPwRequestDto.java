@@ -7,6 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResetPwRequestDto {
-    private String changePw;
+    private String name;
+    private String loginId;
+    private String email;
+    private String resetPw;
 }
 

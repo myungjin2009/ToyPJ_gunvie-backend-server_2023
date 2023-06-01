@@ -269,17 +269,37 @@ public class UserController {
         return dto;
     }
 
-    @PatchMapping("/change_pw")
+    @PatchMapping("/reset_pw")
     public DefaultDto resetPw(@RequestBody ResetPwRequestDto resetPwRequestDto, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
-        User user = (User) httpSession.getAttribute("auth" + EmailType.FIND_PW.name());
+        Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.FIND_PW.name());
+        //TODO : 세션 유효기간 검사 서비스 레벨에 작성하기
         //TODO : 중복 코드!
-        if (user == null) {
+        if (verifyResult == null) {
             dto.setCode(403);
             dto.setMessage("세션이 지워졌거나 너무 오래되었습니다.");
             return dto;
         }
-        user.setPassword(resetPwRequestDto.getChangePw());
+        //이메일 인증 확인(/email/verify)가 안되었을 경우
+        if (!verifyResult.isVerified()) {
+            dto.setCode(403);
+            dto.setMessage("이메일 인증이 되지 않았습니다.");
+            return dto;
+        }
+        //이메일 인증 확인 후, 이메일 주소가 바뀌었을 경우
+        if (!verifyResult.getEmail().equals(resetPwRequestDto.getEmail())) {
+            dto.setCode(403);
+            dto.setMessage("이메일 인증 후 이메일주소 변경됨. 데이터 무결성 오류");
+            return dto;
+        }
+        
+        User user = userRepository.findByNameAndEmail(resetPwRequestDto.getName(), resetPwRequestDto.getEmail());
+        if(user == null) {
+            dto.setCode(403);
+            dto.setMessage("요청에 해당하는 유저 정보가 없습니다.");
+            return dto;
+        }
+        user.setPassword(resetPwRequestDto.getResetPw());
         Boolean result = userService.updatePassword(user);
         if (!result) {
             dto.setCode(500);
