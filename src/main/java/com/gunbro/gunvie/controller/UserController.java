@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -482,15 +483,15 @@ public class UserController {
             dto.setMessage("로그인이 필요합니다.");
             return dto;
         }
-        User toDeleteFollowUser = userRepository.findByLoginId(deleteFollowUser.getLoginId());
-        if (toDeleteFollowUser == null) {
+        Optional<User> toDeleteFollowUser = userRepository.findById(deleteFollowUser.getId());
+        if (toDeleteFollowUser.isEmpty()) {
             dto.setCode(400);
             dto.setMessage("팔로우 삭제 하려는 유저 정보가 없습니다.");
             return dto;
         }
-        followService.deleteFollow(toDeleteFollowUser, loginUser);
+        followService.deleteFollow(toDeleteFollowUser.get(), loginUser);
         dto.setCode(200);
-        dto.setMessage("Follow 해지 하였습니다.  " + toDeleteFollowUser.getLoginId() + " X->X " + loginUser.getLoginId());
+        dto.setMessage("Follow 해지 하였습니다.  " + toDeleteFollowUser.get().getLoginId() + " X->X " + loginUser.getLoginId());
         return dto;
     }
 
@@ -503,15 +504,15 @@ public class UserController {
             dto.setMessage("로그인이 필요합니다.");
             return dto;
         }
-        User toDeleteFollowUser = userRepository.findByLoginId(deleteFollowUser.getLoginId());
-        if (toDeleteFollowUser == null) {
+        Optional<User> toDeleteFollowUser = userRepository.findById(deleteFollowUser.getId());
+        if (toDeleteFollowUser.isEmpty()) {
             dto.setCode(400);
             dto.setMessage("팔로우 삭제 하려는 유저 정보가 없습니다.");
             return dto;
         }
-        followService.deleteFollow(loginUser, toDeleteFollowUser);
+        followService.deleteFollow(loginUser, toDeleteFollowUser.get());
         dto.setCode(200);
-        dto.setMessage("Follow 해지 하였습니다.  " + loginUser.getLoginId() + " X->X " + toDeleteFollowUser.getLoginId());
+        dto.setMessage("Follow 해지 하였습니다.  " + loginUser.getLoginId() + " X->X " + toDeleteFollowUser.get().getLoginId());
         return dto;
     }
 }

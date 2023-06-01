@@ -4,10 +4,14 @@ import com.gunbro.gunvie.model.jpa.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
 
     User findByLoginId(String loginId);
+
+    Optional<User> findById(Long id);
 
     User findByNameAndEmail(String name, String email);
 

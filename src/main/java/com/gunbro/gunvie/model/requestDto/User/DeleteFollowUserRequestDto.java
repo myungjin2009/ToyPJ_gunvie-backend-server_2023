@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class DeleteFollowUserRequestDto {
 
-    private String loginId;
+    private Long id;
 }
