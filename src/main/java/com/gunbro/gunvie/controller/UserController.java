@@ -186,6 +186,21 @@ public class UserController {
         return dto;
     }
 
+    @GetMapping("/logout")
+    public DefaultDto userLogout(HttpSession httpSession) {
+        DefaultDto dto = new DefaultDto();
+        User loginUser = (User) httpSession.getAttribute("loginSession");
+        if (loginUser == null) {
+            dto.setCode(400);
+            dto.setMessage("이미 로그아웃 된 사용자입니다.");
+            return dto;
+        }
+        httpSession.invalidate();
+        dto.setCode(200);
+        dto.setMessage("성공적으로 로그아웃 되었습니다.");
+        return dto;
+    }
+
 
     @PostMapping("/login")
     public DefaultDto userLogin(@RequestBody LocalLogin localLogin, HttpServletRequest request) {
