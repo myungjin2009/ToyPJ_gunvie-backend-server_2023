@@ -1,6 +1,7 @@
 package com.gunbro.gunvie.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,6 +15,15 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("http://gunvie.vercel.app","https://gunvie.vercel.app","116.43.252.74","*")
+                .allowedMethods(
+                        HttpMethod.GET.name(),
+                        HttpMethod.HEAD.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name()
+                        //DELETE 메소드는 DEFAULT_PERMIT_METHODS에 포함되어 있지 않기 때문에
+                        //이와같이 수동 등록해주지 않으면, Invalid CORS Request 가 발생한다.
+                )
                 .allowCredentials(true);
     }
 
