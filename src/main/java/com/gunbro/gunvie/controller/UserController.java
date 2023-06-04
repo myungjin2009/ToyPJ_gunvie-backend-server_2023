@@ -227,7 +227,7 @@ public class UserController {
         return dto;
     }
 
-    @PostMapping("/search_pw")
+    @PostMapping("/search/pw")
     public DefaultDto searchPw(@RequestBody SearchPwRequestDto searchPwRequestDto, HttpSession httpSession) {
         DefaultDto dto = new DefaultDto();
         Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.FIND_PW.name());
@@ -311,7 +311,7 @@ public class UserController {
         return dto;
     }
 
-    @PostMapping("/search_id")
+    @PostMapping("/search/id")
     public SearchIdResponseDto searchId(@RequestBody SearchIdRequestDto searchIdRequestDto, HttpSession httpSession) {
         SearchIdResponseDto dto = new SearchIdResponseDto();
         Email verifyResult = (Email) httpSession.getAttribute("emailVerify" + EmailType.FIND_ID.name());
