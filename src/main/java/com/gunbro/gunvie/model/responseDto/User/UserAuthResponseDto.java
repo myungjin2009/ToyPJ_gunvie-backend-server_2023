@@ -5,12 +5,8 @@ import com.gunbro.gunvie.model.responseDto.DefaultDto;
 import lombok.Data;
 
 @Data
-public class UserInfoResponseDto extends DefaultDto {
-    private String imageSrc;
+public class UserAuthResponseDto extends DefaultDto {
     private Gender gender;
     private String name;
     private String email;
-
-    private long followerCnt;
-    private long followingCnt;
 }

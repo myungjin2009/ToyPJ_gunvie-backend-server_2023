@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class FollowService {
 
@@ -35,6 +37,15 @@ public class FollowService {
         }
         return result;
     }
+
+    public Optional<Long> getFollowingUsersCount(User user) {
+        return followRepository.findFollowingCount(user);
+    }
+
+    public Optional<Long> getFollowerUsersCount(User user) {
+        return followRepository.findFollowerCount(user);
+    }
+
 
     public int userFollow(User loginUser, User toFollowUser) {
         Follow findResult = followRepository.findFollowOne(loginUser, toFollowUser);

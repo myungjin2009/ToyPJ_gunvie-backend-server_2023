@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 public class UserService {
 
@@ -43,6 +45,7 @@ public class UserService {
         return "SUCCESS";
     }
 
+    @Transactional
     public boolean updatePassword(User user) {
         //비밀번호 암호화 로직 (BCrypt)
         String passwordEncoded = bCryptService.encodeBcrypt(user.getPassword());

@@ -20,6 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                         HttpMethod.HEAD.name(),
                         HttpMethod.POST.name(),
                         HttpMethod.PUT.name(),
+                        HttpMethod.PATCH.name(),
                         HttpMethod.DELETE.name()
                         //DELETE 메소드는 DEFAULT_PERMIT_METHODS에 포함되어 있지 않기 때문에
                         //이와같이 수동 등록해주지 않으면, Invalid CORS Request 가 발생한다.

@@ -17,6 +17,7 @@ import com.gunbro.gunvie.model.responseDto.FollowUser.FollowUserResponseDto;
 import com.gunbro.gunvie.model.responseDto.Post.PostList;
 import com.gunbro.gunvie.model.responseDto.Post.PostListResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.SearchIdResponseDto;
+import com.gunbro.gunvie.model.responseDto.User.UserAuthResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.UserInfoResponseDto;
 import com.gunbro.gunvie.model.responseDto.User.UserPostlistResponseDto;
 import com.gunbro.gunvie.repository.UserRepository;
@@ -25,8 +26,7 @@ import com.gunbro.gunvie.service.FollowService;
 import com.gunbro.gunvie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +36,10 @@ import java.util.List;
 import java.util.Optional;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-    //temp
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserService userService;
@@ -55,18 +53,12 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/auth")
-    public UserInfoResponseDto getUserData(@RequestHeader("Cookie") String cookie, HttpSession httpSession) {
-        UserInfoResponseDto dto = new UserInfoResponseDto();
+    public UserAuthResponseDto getUserData(HttpSession httpSession) {
+        UserAuthResponseDto dto = new UserAuthResponseDto();
         //이 코드는 필요가 없다.
         //어차피 RequestHeader에서 Cookie 헤더값이 없으면,
         //MissingRequestHeaderException 으로 보내버리기 때문이다.
         //TODO MissingRequestHeaderException 예외 처리
-//        String[] cookies = cookie.split("; ");
-//        for (String cookieList : cookies) {
-//            if (cookieList.startsWith("JSESSIONID=")) {
-//                logger.warn("찾았다! JSESSIONID = {}",cookieList);
-//            }
-//        }
         User user = (User) httpSession.getAttribute("loginSession");
         if (user == null) {
             dto.setCode(400);
@@ -81,6 +73,34 @@ public class UserController {
             return dto;
         }
     }
+
+    @GetMapping("/info")
+    public UserInfoResponseDto getUserInfo(HttpSession httpSession) {
+        //TODO 지금은 팔로워, 팔로잉 갯수 등 간단한 것들만 가져오지만,
+        //나중에는 프로필 이미지 경로 등 계속해서 추가해야함.
+        UserInfoResponseDto dto = new UserInfoResponseDto();
+        User user = (User) httpSession.getAttribute("loginSession");
+        if (user == null) {
+            dto.setCode(400);
+            dto.setMessage("세션이 오래되었거나 지워졌습니다. 다시 로그인이 필요합니다.");
+            return dto;
+        } else {
+            long followerCount = followService.getFollowerUsersCount(user).orElseGet(() -> 0L);
+            long followingCount = followService.getFollowingUsersCount(user).orElseGet(() -> 0L);
+
+            dto.setCode(200);
+            dto.setMessage("가져왔습니다.");
+            //팔로워, 팔로잉 가져오기
+            dto.setFollowerCnt(followerCount);
+            dto.setFollowingCnt(followingCount);
+
+            dto.setName(user.getName());
+            dto.setGender(user.getGender());
+            dto.setEmail(user.getEmail());
+            return dto;
+        }
+    }
+
 
     @GetMapping("/follower")
     public FollowUserResponseDto showFollower(@RequestParam int page, HttpSession httpSession) {
